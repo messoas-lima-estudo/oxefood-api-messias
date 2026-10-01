@@ -1,5 +1,7 @@
 package br.edu.ifpe.oxefood.api.produto;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -14,7 +16,14 @@ public ProdutoService (ProdutoRepository repository){
 
 
 public Produto build(ProdutoDTO dto){
-    Produto produto = new Produto();
+    Produto produto = null;
+    if(dto.getId() == null){
+        produto = new  Produto();
+    }else{
+        produto = repository.findById(dto.getId()).get();
+
+    }
+
     produto.setCodigo(dto.getCodigo());
     produto.setTitulo(dto.getTitulo());
     produto.setDescricao(dto.getDescricao());
@@ -31,7 +40,31 @@ public Produto cadastrar(ProdutoDTO dto){
     return repository.save(produto);
 }
 
+public Produto atualizar( ProdutoDTO dto){
 
+    Produto produto = build(dto);
+    return repository.save(produto);
+}
+
+
+        public List<Produto> listar() {
+
+        return repository.findAll(); // SELECT * FROM cliente
+    }
+
+    public Produto buscarPorId(Long id) {
+
+        return repository.findById(id).get();
+    }
+
+
+           @Transactional
+   public void remover(Long id) {
+
+        Produto produto = repository.findById(id).get();
+        produto.setHabilitado(false);
+        repository.save(produto);
+   }
 
  
 

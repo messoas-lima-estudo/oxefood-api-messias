@@ -1,5 +1,7 @@
 package br.edu.ifpe.oxefood.api.empresa;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -16,7 +18,17 @@ public class EmpresaService {
 
     public Empresa build(EmpresaDTO dto){
 
-        Empresa empresa = new Empresa();
+            Empresa empresa = null;
+
+        if (dto.getId() == null) { // Montado para o cadastro
+
+            empresa = new Empresa();
+
+        } else { // Consultado para a alteração
+
+            empresa = repository.findById(dto.getId()).get();
+        }
+
         empresa.setSite(dto.getSite());
         empresa.setCnpj(dto.getCnpj());
         empresa.setInscricaoEstadual(dto.getInscricaoEstadual());
@@ -36,6 +48,33 @@ public class EmpresaService {
         return repository.save(empresa);
         }
 
+
+    @Transactional
+    public Empresa atualizar(EmpresaDTO dto) {
+
+        Empresa empresa = this.build(dto);
+        return repository.save(empresa); // update pq passei objeto com ID
+    }
+    
+
+        public List<Empresa> listar() {
+
+        return repository.findAll(); // SELECT * FROM cliente
+    }
+
+    public Empresa buscarPorId(Long id) {
+
+        return repository.findById(id).get();
+    }
+
+           @Transactional
+   public void remover(Long id) {
+
+        Empresa empresa = repository.findById(id).get();
+        empresa.setHabilitado(false);
+
+        repository.save(empresa);
+   }
 
 
 
