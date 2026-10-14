@@ -2,9 +2,11 @@ package br.edu.ifpe.oxefood.api.produto;
 
 import org.hibernate.annotations.SQLRestriction;
 
+import br.edu.ifpe.oxefood.categoriaProduto.CategoriaProduto;
 import br.edu.ifpe.oxefood.util.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +21,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Produto extends EntidadeAuditavel {
+
+
+   @ManyToOne
+   private CategoriaProduto categoria;
+
 
     @Column
     private String codigo;

@@ -4,14 +4,18 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.edu.ifpe.oxefood.categoriaProduto.CategoriaProdutoRepository;
+import br.edu.ifpe.oxefood.exception.ProdutoException;
 import jakarta.transaction.Transactional;
 
 @Service
 public class ProdutoService {
 private final ProdutoRepository repository;
+   private final CategoriaProdutoRepository categoriaProdutoRepository;
 
-public ProdutoService (ProdutoRepository repository){
+public ProdutoService (ProdutoRepository repository, CategoriaProdutoRepository categoriaProdutoRepository){
     this.repository = repository;
+    this.categoriaProdutoRepository = categoriaProdutoRepository;
 }
 
 
@@ -23,7 +27,7 @@ public Produto build(ProdutoDTO dto){
         produto = repository.findById(dto.getId()).get();
 
     }
-
+    produto.setCategoria(categoriaProdutoRepository.findById(dto.getIdCategoria()).get());
     produto.setCodigo(dto.getCodigo());
     produto.setTitulo(dto.getTitulo());
     produto.setDescricao(dto.getDescricao());
@@ -34,8 +38,14 @@ public Produto build(ProdutoDTO dto){
 }
 
 @Transactional
-public Produto cadastrar(ProdutoDTO dto){
+public Produto cadastrar(ProdutoDTO dto) {
+
     Produto produto = build(dto);
+
+    if ( produto.getValorUnitario() < 10 ){
+        throw new ProdutoException(ProdutoException.MSG_VALOR_MINIMO_PRODUTO);
+
+    }
     produto.setHabilitado(true);
     return repository.save(produto);
 }
